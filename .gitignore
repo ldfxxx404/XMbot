@@ -1,0 +1,17 @@
+**/build/
+CMakeCache.txt
+CMakeFiles/
+.env
+*.o
+*.obj
+*.so
+*.exe
+*.out
+*.a
+*.lib
+
+*.swp
+*.swo
+*.bak
+
+/tmp/
