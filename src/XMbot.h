@@ -1,6 +1,7 @@
 #ifndef XMBOT_H
 #define XMBOT_H
 
+#include "commandHandler.h"
 #include <gloox/client.h>
 #include <gloox/connectionlistener.h>
 #include <gloox/loghandler.h>
@@ -8,7 +9,6 @@
 #include <gloox/messagehandler.h>
 #include <gloox/messagesession.h>
 #include <iostream>
-#include "commandHandler.h"
 
 using namespace gloox;
 
