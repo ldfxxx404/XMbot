@@ -1,5 +1,6 @@
 #include "XMbot.h"
-#include "commandList.h"
+//#include "commandList.h"
+#include <cstddef>
 #include <gloox/gloox.h>
 #include <gloox/message.h>
 #include <gloox/messagehandler.h>
@@ -20,22 +21,14 @@ void XMbot::handleMessage(const Message &msg, MessageSession *session) {
   }
 
   std::string body = msg.body();
-  if (body.find("/") != 0) {
-    std::cout << "Not command, ignore\n";
-    return;
-  }
-  if (body == "/status" || body == "/status ") {
-    Message reply(Message::Chat, msg.from(), botStatusCommandHandler());
-    client.send(reply);
-  } else if (body == "/help" || body == "/help ") {
-    Message reply(Message::Chat, msg.from(), botHelpCommandHandler());
-    client.send(reply);
-  } else if (body == "/ping" || body == "/ping ") {
-    std::string website = "google.com";
-    Message reply(Message::Chat, msg.from(), botPingCommandHandler(website));
-    client.send(reply);
-  } else {
-    Message reply(Message::Chat, msg.from(), botUnknownCommandHandler());
+  if (body[0] == '/') {
+    size_t spacePosition = body.find(' ');
+    std::string command = body.substr(0, spacePosition);
+    std::string argument = (spacePosition != std::string::npos)
+                               ? body.substr(spacePosition + 1)
+                               : "";
+    std::string response = commandHandler.handleCommand(command, argument);
+    Message reply(gloox::Message::Chat, msg.from(), response);
     client.send(reply);
   }
 }

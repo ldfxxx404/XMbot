@@ -8,6 +8,7 @@
 #include <gloox/messagehandler.h>
 #include <gloox/messagesession.h>
 #include <iostream>
+#include "commandHandler.h"
 
 using namespace gloox;
 
@@ -30,6 +31,7 @@ public:
 
 private:
   Client client;
+  CommandHandler commandHandler;
 };
 
 #endif // XMBOT_H
