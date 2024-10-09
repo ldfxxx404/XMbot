@@ -20,7 +20,7 @@ void XMbot::handleMessage(const Message &msg, MessageSession *session) {
   }
 
   std::string body = msg.body();
-  if (body.find("/") != 0){
+  if (body.find("/") != 0) {
     std::cout << "Not command, ignore\n";
     return;
   }
