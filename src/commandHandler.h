@@ -8,12 +8,13 @@ using std::string;
 class CommandHandler {
 public:
   string handleCommand(const string &command, const string &argument = "");
+  string botHandleAnon(const string &argument);
 
 private:
-  std::string botHandleHelp();
-  std::string botHandlePing(const std::string &website);
-  std::string botHandleStatus();
-  std::string botHandleUnknown();
-};
+  string botHandleHelp();
+  string botHandlePing(const string &website);
+  string botHandleStatus();
+  string botHandleUnknown();
+  };
 
 #endif // COMMAND_HANLDLER_H

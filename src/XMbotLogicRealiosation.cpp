@@ -1,12 +1,15 @@
 #include "XMbot.h"
 #include <cstddef>
 #include <gloox/gloox.h>
+#include <gloox/jid.h>
 #include <gloox/message.h>
 #include <gloox/messagehandler.h>
 #include <gloox/messagesession.h>
 #include <string>
 
-XMbot::XMbot(const std::string &jid, const std::string &password)
+using std::string;
+
+XMbot::XMbot(const string &jid, const string &password)
     : client(jid, password) {
   client.registerMessageHandler(this);
   client.registerConnectionListener(this);
@@ -22,13 +25,27 @@ void XMbot::handleMessage(const Message &msg, MessageSession *session) {
   std::string body = msg.body();
   if (body[0] == '/') {
     size_t spacePosition = body.find(' ');
-    std::string command = body.substr(0, spacePosition);
-    std::string argument = (spacePosition != std::string::npos)
-                               ? body.substr(spacePosition + 1)
-                               : "";
-    std::string response = commandHandler.handleCommand(command, argument);
+    string command = body.substr(0, spacePosition);
+    string argument =
+        (spacePosition != string::npos) ? body.substr(spacePosition + 1) : "";
+
+    string response = commandHandler.handleCommand(command, argument);
     Message reply(gloox::Message::Chat, msg.from(), response);
     client.send(reply);
+
+    if (command == "/anon") {
+      string response = commandHandler.botHandleAnon(argument);
+      if (response.find("Error") == 0) {
+        Message reply(Message::Chat, msg.from(), response);
+        client.send(reply);
+      } else {
+        size_t firstSpacePosition = argument.find(' ');
+        string recipient = argument.substr(0, firstSpacePosition);
+        string message = argument.substr(firstSpacePosition + 1);
+        Message anonMessage(Message::Chat, JID(recipient), message);
+        client.send(anonMessage);
+      }
+    }
   }
 }
 
@@ -45,8 +62,7 @@ bool XMbot::onTLSConnect(const CertInfo &info) {
   return true;
 }
 
-void XMbot::handleLog(LogLevel level, LogArea area,
-                      const std::string &message) {
+void XMbot::handleLog(LogLevel level, LogArea area, const string &message) {
   std::cout << "LOG [" << level << "] (" << area << "): " << message
             << std::endl;
 }

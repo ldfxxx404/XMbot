@@ -12,7 +12,6 @@ include_directories(${GLOOX_INCLUDE_DIRS} src)
 set(SOURCES
     src/main.cpp
     src/XMbotLogicRealiosation.cpp
-    #src/commandList.cpp
     src/commandHandler.cpp
 )
 
