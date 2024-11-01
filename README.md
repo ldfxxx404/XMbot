@@ -9,7 +9,7 @@ use script
 ```bash
 sudo docker build -t <bot name> .  
 sudo docker run <bot name>
-
+```
 # env settings
 
 ```bash 
