@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     libc6-dev \
     libgloox-dev \
     zlib1g-dev \
+    iputils-ping \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory

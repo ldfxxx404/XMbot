@@ -9,3 +9,11 @@ use script
 ```bash
 sudo docker build -t <bot name> .  
 sudo docker run <bot name>
+
+# env settings
+
+```bash 
+in .env file you must have 
+USERNAME=u_xmpp_usrnm
+PASSWORD=u_passwrd
+```
