@@ -1,7 +1,0 @@
-/run/media/f1la/9a6756c1-13df-4db7-b439-964daefaeabe/proger_projets/github_repos/XMbot/build/CMakeFiles/XMbot.dir
-/run/media/f1la/9a6756c1-13df-4db7-b439-964daefaeabe/proger_projets/github_repos/XMbot/build/CMakeFiles/edit_cache.dir
-/run/media/f1la/9a6756c1-13df-4db7-b439-964daefaeabe/proger_projets/github_repos/XMbot/build/CMakeFiles/rebuild_cache.dir
-/run/media/f1la/9a6756c1-13df-4db7-b439-964daefaeabe/proger_projets/github_repos/XMbot/build/CMakeFiles/list_install_components.dir
-/run/media/f1la/9a6756c1-13df-4db7-b439-964daefaeabe/proger_projets/github_repos/XMbot/build/CMakeFiles/install.dir
-/run/media/f1la/9a6756c1-13df-4db7-b439-964daefaeabe/proger_projets/github_repos/XMbot/build/CMakeFiles/install/local.dir
-/run/media/f1la/9a6756c1-13df-4db7-b439-964daefaeabe/proger_projets/github_repos/XMbot/build/CMakeFiles/install/strip.dir
