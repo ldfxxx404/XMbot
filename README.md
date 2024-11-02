@@ -19,8 +19,13 @@ To build and run XMbot, use the provided installation script. Follow the instruc
    - Add the following environment variables in `.env`:
 
      ```bash
-     USERNAME=your_xmpp_username
-     PASSWORD=your_xmpp_password
+      USERNAME=login.xmpp
+      PASSWORD=password
+
+      LLAMA_API_URL="http://localhost:8080/api/chat/completions"
+      LLAMA_API_KEY="abc123456789"
+      LLAMA_MODEL_NAME="dolphin-mistral:latest"
+
      ```
 
 ## Building the Bot
@@ -63,8 +68,12 @@ If you prefer to use Docker:
 In the `.env` file, define the following credentials and settings for the bot to connect to the XMPP server:
 
 ```bash
-USERNAME=your_xmpp_username
-PASSWORD=your_password
+USERNAME=bot.xmpp
+PASSWORD=password
+
+LLAMA_API_URL="http://localhost:8080/api/chat/completions"
+LLAMA_API_KEY="api"
+LLAMA_MODEL_NAME="dolphin-mistral:latest"
 ```
 
 ### Important Environment Variables
