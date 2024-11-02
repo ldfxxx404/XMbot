@@ -9,13 +9,13 @@ class CommandHandler {
 public:
     string handleCommand(const string &command, const string &argument = "");
     string botHandleAnon(const string &argument);
+    string botHandleNews(); // Новый метод для обработки /news
 
 private:
     string botHandleHelp();
     string botHandlePing(const string &website);
     string botHandleStatus();
     string botHandleUnknown();
-    string botHandleAI(const string &argument);  // Новый метод для команды /ai
 };
 
 #endif // COMMAND_HANDLER_H
