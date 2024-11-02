@@ -15,6 +15,7 @@ private:
     string botHandlePing(const string &website);
     string botHandleStatus();
     string botHandleUnknown();
+    string botHandleAI(const string &argument);  // Новый метод для команды /ai
 };
 
 #endif // COMMAND_HANDLER_H

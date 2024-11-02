@@ -1,6 +1,7 @@
 **/build/
 CMakeCache.txt
 CMakeFiles/
+/venv
 .env
 *.o
 *.obj

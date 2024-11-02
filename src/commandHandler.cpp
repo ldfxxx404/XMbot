@@ -2,6 +2,9 @@
 #include <cstdlib>
 #include <fstream>
 #include <string>
+#include <memory> // Добавлено для std::shared_ptr
+#include <array>
+#include <stdexcept>
 
 using std::fstream, std::getline;
 
@@ -14,9 +17,27 @@ string CommandHandler::handleCommand(const string &command, const string &argume
         return botHandleStatus();
     } else if (command == "/anon") {
         return botHandleAnon(argument);
+    } else if (command == "/ai") {
+        return botHandleAI(argument);
     } else {
         return botHandleUnknown();
     }
+}
+
+string CommandHandler::botHandleAI(const string &argument) {
+    string command = "python3 ../run.py " + argument; 
+
+    std::shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+
+    char buffer[128];
+    string result;
+    while (fgets(buffer, sizeof(buffer), pipe.get()) != nullptr) {
+        result += buffer;
+    }
+    return result;
 }
 
 string CommandHandler::botHandleHelp() {
