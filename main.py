@@ -1,56 +1,53 @@
 import requests
 from bs4 import BeautifulSoup
 
-# URL сайта, который мы будем парсить
-url = 'https://forklog.com/news'
-
-try:
-    # Выполняем GET-запрос к сайту
+def fetch_opennet_news():
+    url = "https://www.opennet.ru/opennews/index.shtml"
     response = requests.get(url)
-    response.raise_for_status()  # Проверяем, успешен ли запрос (вызывает исключение для ошибок)
+    response.raise_for_status()  # Проверяем успешность запроса
+    
+    soup = BeautifulSoup(response.content, 'html.parser')
+    articles = []
 
-    # Создаем объект BeautifulSoup для парсинга HTML
-    soup = BeautifulSoup(response.text, 'html.parser')
+    # Находим все блоки новостей на странице
+    news_blocks = soup.find_all('td', class_='tdate')
+    
+    for date_block in news_blocks:
+        date = date_block.get_text(strip=True)  # Дата публикации
+        
+        # Находим блок с заголовком и ссылкой
+        title_block = date_block.find_next('a', class_='title2')
+        title = title_block.get_text(strip=True)
+        link = "https://www.opennet.ru" + title_block['href']
+        
+        # Находим краткое описание новости
+        summary_block = date_block.find_next('td', class_='chtext2')
+        summary = summary_block.get_text(strip=True).split('...')[0] + '...' if summary_block else 'Описание отсутствует.'
 
-    # Находим блоки новостей, используя класс 'post_item'
-    articles = soup.find_all('div', class_='post_item')
+        # Находим количество обсуждений
+        discussion_block = summary_block.find('span', class_='cnt') if summary_block else None
+        discussions = discussion_block.get_text(strip=True) if discussion_block else "Нет данных"
 
-    if not articles:
-        print("Новости не найдены на странице.")
+        articles.append({
+            "date": date,
+            "title": title,
+            "summary": summary,
+            "link": link,
+            "discussions": discussions
+        })
+
+    return articles
+
+def display_articles(articles):
+    for article in articles:
+        print(f"**{article['title']}**\n"
+              f"Дата: {article['date']}\n"
+              f"Описание: {article['summary']}\n"
+              f"[Читать далее]({article['link']}) | Обсуждение ({article['discussions']})\n")
+
+if __name__ == "__main__":
+    news_articles = fetch_opennet_news()
+    if news_articles:
+        display_articles(news_articles)
     else:
-        # Проходим по всем найденным новостям и извлекаем информацию
-        for article in articles:
-            # Ищем заголовок и ссылку
-            title_tag = article.find('a')
-            if title_tag:
-                title = title_tag.find('p').get_text(strip=True)  # Заголовок
-                link = title_tag['href']
-                
-                # Проверяем, если ссылка относительная, добавляем базовый URL
-                if not link.startswith('http'):
-                    link = 'https://forklog.com' + link
-                
-                # Ищем краткое содержание
-                summary_tag = article.find('span', class_='post_excerpt')
-                summary = summary_tag.get_text(strip=True) if summary_tag else 'Краткое содержание отсутствует.'
-
-                # Ищем автора
-                author_tag = article.find('a', class_='author_lnk')
-                author = author_tag.get_text(strip=True) if author_tag else 'Автор не указан'
-
-                # Ищем дату публикации
-                date_tag = article.find('span', class_='post_date')
-                date = date_tag.get_text(strip=True) if date_tag else 'Дата не указана'
-
-                # Ищем количество просмотров
-                views_tag = article.find('span', class_='single_post_views')
-                views = views_tag.get_text(strip=True) if views_tag else 'Просмотры не указаны'
-
-                print(f'Заголовок: {title}\nКраткое содержание: {summary}\nСсылка: {link}\nАвтор: {author}\nДата: {date}\nПросмотры: {views}\n')
-
-except requests.exceptions.HTTPError as http_err:
-    print(f'HTTP ошибка: {http_err}')
-except requests.exceptions.RequestException as req_err:
-    print(f'Ошибка запроса: {req_err}')
-except Exception as e:
-    print(f'Произошла ошибка: {e}')
+        print("Новости не найдены.")
