@@ -10,6 +10,8 @@ using std::fstream, std::getline;
 string CommandHandler::handleCommand(const string &command, const string &argument) {
     if (command == "/help") {
         return botHandleHelp();
+    } else if (command == "/joke") {
+        return botHandleJoke();
     } else if (command == "/ping") {
         return botHandlePing(argument);
     } else if (command == "/status") {
@@ -22,6 +24,22 @@ string CommandHandler::handleCommand(const string &command, const string &argume
         return botHandleUnknown();
     }
 }
+string CommandHandler::botHandleJoke() {
+    // Запуск Python-скрипта
+    std::string command = "python3 ../scripts/joke.py";
+    
+    // Открываем pipe для чтения вывода скрипта
+    std::shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
+    char buffer[128];
+    std::string result;
+    
+    // Читаем весь вывод скрипта
+    while (fgets(buffer, sizeof(buffer), pipe.get()) != nullptr) {
+        result += buffer;
+    }
+    
+    return result;  // Возвращаем результат выполнения скрипта
+}
 
 string CommandHandler::botHandleHelp() {
     return "List of available commands: \n"
@@ -29,7 +47,8 @@ string CommandHandler::botHandleHelp() {
            "/help - Show this help message\n"
            "/status - Get the bot's current status\n"
            "/anon <address@xmpp.com> <message> - Send an anonymous message\n"
-           "/news - Get the latest news updates\n"; // Добавляем команду /news
+           "/news - Get the latest news updates\n"
+           "/joke - Воспроизводит случайную хохму"; // Добавляем команду /news
 }
 
 string CommandHandler::botHandlePing(const string &website) {
@@ -72,7 +91,7 @@ string CommandHandler::botHandleAnon(const string &argument) {
 }
 
 string CommandHandler::botHandleNews() { // Новый метод для обработки /news
-    string command = "python3 ../main.py"; // Путь к вашему Python скрипту
+    string command = "python3 ../scripts/main.py"; // Путь к вашему Python скрипту
 
     std::shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
     if (!pipe) {

@@ -10,6 +10,7 @@ public:
     string handleCommand(const string &command, const string &argument = "");
     string botHandleAnon(const string &argument);
     string botHandleNews(); // Новый метод для обработки /news
+    string botHandleJoke();
 
 private:
     string botHandleHelp();
