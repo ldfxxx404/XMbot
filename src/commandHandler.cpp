@@ -25,20 +25,17 @@ string CommandHandler::handleCommand(const string &command, const string &argume
     }
 }
 string CommandHandler::botHandleJoke() {
-    // Запуск Python-скрипта
     std::string command = "python3 ../scripts/joke.py";
     
-    // Открываем pipe для чтения вывода скрипта
     std::shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
     char buffer[128];
     std::string result;
     
-    // Читаем весь вывод скрипта
     while (fgets(buffer, sizeof(buffer), pipe.get()) != nullptr) {
         result += buffer;
     }
     
-    return result;  // Возвращаем результат выполнения скрипта
+    return result;  
 }
 
 string CommandHandler::botHandleHelp() {

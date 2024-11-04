@@ -17,10 +17,13 @@ def get_joke():
         
         # Переводим анекдот на русский
         translated_joke = translate_to_russian(joke)
-        return translated_joke
+        
+        # Выводим анекдот на английском и его перевод
+        print(f"Joke in English: {joke}")
+        print(f"Анекдот на русском: {translated_joke}")
 
     except Exception as e:
-        return "Ошибка при получении анекдота: " + str(e)
+        print("Ошибка при получении анекдота: " + str(e))
 
 def translate_to_russian(text):
     try:
@@ -31,4 +34,4 @@ def translate_to_russian(text):
         return "Ошибка при переводе анекдота: " + str(e)
 
 # Пример вызова функции
-print(get_joke())
+get_joke()
