@@ -4,8 +4,16 @@
 
 XMbot is a lightweight XMPP bot designed with minimal functionality to support basic messaging operations over the XMPP protocol.
 
-## Installation
+## Requirements
 
+gloox - lib for xmmp bot
+python3 - scripts
+
+## Installation
+Install python req file 
+```bash
+pip install -r requirements.txt
+```
 To build and run XMbot, use the provided installation script. Follow the instructions below to set up the environment and configure the bot.
 
 ### Prerequisites
@@ -21,10 +29,6 @@ To build and run XMbot, use the provided installation script. Follow the instruc
      ```bash
       USERNAME=login.xmpp
       PASSWORD=password
-
-      LLAMA_API_URL="http://localhost:8080/api/chat/completions"
-      LLAMA_API_KEY="abc123456789"
-      LLAMA_MODEL_NAME="dolphin-mistral:latest"
 
      ```
 
@@ -70,10 +74,6 @@ In the `.env` file, define the following credentials and settings for the bot to
 ```bash
 USERNAME=bot.xmpp
 PASSWORD=password
-
-LLAMA_API_URL="http://localhost:8080/api/chat/completions"
-LLAMA_API_KEY="api"
-LLAMA_MODEL_NAME="dolphin-mistral:latest"
 ```
 
 ### Important Environment Variables
@@ -113,3 +113,4 @@ The XMbot is designed for minimal functionality but can be extended for various 
 - **Connection Issues**: Ensure the correct credentials and server address are specified in `.env`.
 - **Missing Dependencies**: Rerun `./install.sh` to check dependencies.
 - **Environment Variables**: Confirm that all required environment variables are set in `.env`.
+
