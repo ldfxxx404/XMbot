@@ -11,6 +11,7 @@ public:
     string botHandleAnon(const string &argument);
     string botHandleNews(); // Новый метод для обработки /news
     string botHandleJoke();
+    string botHandleWeather(const string &argument);
 
 private:
     string botHandleHelp();

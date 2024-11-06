@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(XMbot VERSION 1.0.0)
+project(XMbot VERSION 1.5.0)
 
 # Установите стандарт C++
 set(CMAKE_CXX_STANDARD 17)

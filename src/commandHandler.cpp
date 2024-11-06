@@ -18,12 +18,29 @@ string CommandHandler::handleCommand(const string &command, const string &argume
         return botHandleStatus();
     } else if (command == "/anon") {
         return botHandleAnon(argument);
-    } else if (command == "/news") {  // Обработка новой команды /news
-        return botHandleNews();
+    } else if (command == "/news") { 
+        return botHandleNews(); 
+    } else if (command == "/weth") {
+        return botHandleWeather(argument);
     } else {
         return botHandleUnknown();
     }
 }
+
+string CommandHandler::botHandleWeather(const string &city) {
+    std::string command = "python3 ../scripts/wether.py " + city;
+
+    std::shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
+    char buffer[128];
+    std::string result;
+    
+    while (fgets(buffer, sizeof(buffer), pipe.get()) != nullptr) {
+        result += buffer;
+    }
+    
+    return result; 
+}
+
 string CommandHandler::botHandleJoke() {
     std::string command = "python3 ../scripts/joke.py";
     
@@ -45,7 +62,8 @@ string CommandHandler::botHandleHelp() {
            "/status - Get the bot's current status\n"
            "/anon <address@xmpp.com> <message> - Send an anonymous message\n"
            "/news - Get the latest news updates\n"
-           "/joke - Воспроизводит случайную хохму"; // Добавляем команду /news
+           "/joke - Воспроизводит случайную хохму\n"
+           "/weth <city_name> - взвращает погоду в выбраном городе";  // Добавляем команду /news
 }
 
 string CommandHandler::botHandlePing(const string &website) {
