@@ -15,7 +15,6 @@ public:
 
 private:
     string botHandleHelp();
-    string botHandlePing(const string &website);
     string botHandleStatus();
     string botHandleUnknown();
 };
