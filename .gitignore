@@ -16,3 +16,4 @@ CMakeFiles/
 *.bak
 
 /tmp/
+/logs/

@@ -17,35 +17,46 @@ XMbot::XMbot(const string &jid, const string &password)
 
 void XMbot::handleMessage(const Message &msg, MessageSession *session) {
     if (msg.subtype() == Message::Chat && !msg.body().empty()) {
-        configManager.log("Received message from " + msg.from().bare());
-        configManager.log("Text: " + msg.body());
+        // Логируем получение сообщения
+        configManager.log("Received message from " + msg.from().bare(), msg.from().bare(), msg.body());
     }
 
-    string body = msg.body();
+    std::string body = msg.body();
     if (body[0] == '/') {
         size_t spacePosition = body.find(' ');
-        string command = body.substr(0, spacePosition);
-        string argument = (spacePosition != string::npos) ? body.substr(spacePosition + 1) : "";
+        std::string command = body.substr(0, spacePosition);
+        std::string argument = (spacePosition != std::string::npos) ? body.substr(spacePosition + 1) : "";
 
-        string response = commandHandler.handleCommand(command, argument);
+        // Получаем ответ от обработчика команд
+        std::string response = commandHandler.handleCommand(command, argument);
+
+        // Логируем ответ от бота с указанием пользователя
+        configManager.log("Sending bot response", msg.from().bare(), response);
+
+        // Отправляем ответ обратно пользователю
         Message reply(gloox::Message::Chat, msg.from(), response);
         client.send(reply);
 
+        // Обработка команды /anon отдельно
         if (command == "/anon") {
-            string response = commandHandler.botHandleAnon(argument);
+            std::string response = commandHandler.botHandleAnon(argument);
             if (response.find("Error") == 0) {
                 Message reply(Message::Chat, msg.from(), response);
                 client.send(reply);
             } else {
                 size_t firstSpacePosition = argument.find(' ');
-                string recipient = argument.substr(0, firstSpacePosition);
-                string message = argument.substr(firstSpacePosition + 1);
+                std::string recipient = argument.substr(0, firstSpacePosition);
+                std::string message = argument.substr(firstSpacePosition + 1);
                 Message anonMessage(Message::Chat, JID(recipient), message);
                 client.send(anonMessage);
+
+                // Логируем анонимное сообщение
+                configManager.log("Sending anonymous message", recipient, message);
             }
         }
     }
 }
+
 
 void XMbot::onConnect() {
     configManager.log("Connected to XMPP server.");
