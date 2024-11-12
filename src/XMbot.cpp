@@ -27,8 +27,8 @@ void XMbot::handleMessage(const Message &msg, MessageSession *session) {
         std::string command = body.substr(0, spacePosition);
         std::string argument = (spacePosition != std::string::npos) ? body.substr(spacePosition + 1) : "";
 
-        // Получаем ответ от обработчика команд
-        std::string response = commandHandler.handleCommand(command, argument);
+        // Теперь передаем client как параметр
+        std::string response = commandHandler.handleCommand(client, command, argument);
 
         // Логируем ответ от бота с указанием пользователя
         configManager.log("Sending bot response", msg.from().bare(), response);
@@ -36,24 +36,6 @@ void XMbot::handleMessage(const Message &msg, MessageSession *session) {
         // Отправляем ответ обратно пользователю
         Message reply(gloox::Message::Chat, msg.from(), response);
         client.send(reply);
-
-        // Обработка команды /anon отдельно
-        if (command == "/anon") {
-            std::string response = commandHandler.botHandleAnon(argument);
-            if (response.find("Error") == 0) {
-                Message reply(Message::Chat, msg.from(), response);
-                client.send(reply);
-            } else {
-                size_t firstSpacePosition = argument.find(' ');
-                std::string recipient = argument.substr(0, firstSpacePosition);
-                std::string message = argument.substr(firstSpacePosition + 1);
-                Message anonMessage(Message::Chat, JID(recipient), message);
-                client.send(anonMessage);
-
-                // Логируем анонимное сообщение
-                configManager.log("Sending anonymous message", recipient, message);
-            }
-        }
     }
 }
 
@@ -72,7 +54,9 @@ bool XMbot::onTLSConnect(const CertInfo &info) {
 }
 
 void XMbot::handleLog(LogLevel level, LogArea area, const string &message) {
-    configManager.log("LOG [" + std::to_string(level) + "] (" + std::to_string(area) + "): " + message);
+    configManager.log("Log entry", "Level " + std::to_string(level), message);
 }
 
-void XMbot::run() { client.connect(true); }
+void XMbot::run() {
+    client.connect();
+}

@@ -5,12 +5,14 @@
 #include <memory>
 #include <stdexcept>
 #include <filesystem>
-#include <iostream>   // For std::cerr
-#include <cstring>    // For strerror
+#include <iostream>
+#include <cstring>
+#include <gloox/message.h>  // Для использования gloox::Message
+#include <gloox/jid.h>
 
 using std::fstream, std::getline;
 
-std::string CommandHandler::handleCommand(const std::string &command, const std::string &argument) {
+std::string CommandHandler::handleCommand(gloox::Client &client, const std::string &command, const std::string &argument) {
     if (command == "/help") {
         return botHandleHelp();
     } else if (command == "/joke") {
@@ -18,7 +20,18 @@ std::string CommandHandler::handleCommand(const std::string &command, const std:
     } else if (command == "/status") {
         return botHandleStatus();
     } else if (command == "/anon") {
-        return botHandleAnon(argument);
+        // Передаем правильный объект gloox::JID, а не строку
+        size_t spacePosition = argument.find(' ');
+        if (spacePosition == std::string::npos) {
+            return "Error: Invalid format. Use /anon <address@xmpp.com> <message>";
+        }
+
+        std::string recipient = argument.substr(0, spacePosition);
+        std::string message = argument.substr(spacePosition + 1);
+        gloox::JID jid(recipient); // Создаем объект JID для получателя
+        gloox::Message msg(gloox::Message::Chat, jid, message); // Используем JID вместо строки
+
+        return botHandleAnon(client, msg, message);  // Передаем client и сообщение
     } else if (command == "/news") { 
         return botHandleNews(); 
     } else if (command == "/weth") {
@@ -29,10 +42,8 @@ std::string CommandHandler::handleCommand(const std::string &command, const std:
 }
 
 std::string CommandHandler::botHandleWeather(const std::string &city) {
-    // Ensure the 'tmp' directory exists
     std::filesystem::create_directory("../tmp");
 
-    // Write the city name to 'wthet_inpyt.txt'
     std::ofstream inputFile("../tmp/wthet_inpyt.txt");
     if (!inputFile) {
         std::cerr << "Error opening input file: " << strerror(errno) << std::endl;
@@ -41,14 +52,12 @@ std::string CommandHandler::botHandleWeather(const std::string &city) {
     inputFile << city;
     inputFile.close();
 
-    // Execute the Python script, specifying the input and output files
     int result = std::system("python3 ../scripts/wether.py ../tmp/wthet_inpyt.txt ../tmp/wthet_outpyt.txt");
     if (result != 0) {
         std::cerr << "Error executing Python script." << std::endl;
         return "Error: Could not execute Python script.";
     }
 
-    // Read the result from 'wthet_outpyt.txt'
     std::ifstream outputFile("../tmp/wthet_outpyt.txt");
     if (!outputFile) {
         std::cerr << "Error opening output file: " << strerror(errno) << std::endl;
@@ -63,7 +72,6 @@ std::string CommandHandler::botHandleWeather(const std::string &city) {
 std::string CommandHandler::botHandleJoke() {
     std::string command = "python3 ../scripts/joke.py";
     
-    // Use popen for better control over the process
     std::shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
     if (!pipe) {
         std::cerr << "Error executing joke script." << std::endl;
@@ -97,25 +105,9 @@ std::string CommandHandler::botHandleUnknown() {
     return "Unknown command! Try /help for more information";
 }
 
-std::string CommandHandler::botHandleAnon(const std::string &argument) {
-    size_t firstSpacePosition = argument.find(' ');
-    if (firstSpacePosition == std::string::npos) {
-        return "Error: Incorrect format. Use /anon <address@xmpp.com> <message>";
-    }
-    
-    std::string recipient = argument.substr(0, firstSpacePosition);
-    std::string message = argument.substr(firstSpacePosition + 1);
-    
-    if (message.empty()) {
-        return "Error: Message cannot be empty.";
-    }
-    return "Sending message to: " + recipient + "\nMessage: " + message;
-}
+std::string CommandHandler::botHandleNews() { 
+    std::string command = "python3 ../scripts/main.py";
 
-std::string CommandHandler::botHandleNews() { // Handling /news
-    std::string command = "python3 ../scripts/main.py"; // Path to your Python script
-
-    // Use popen to capture script output
     std::shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
     if (!pipe) {
         std::cerr << "Error executing news script." << std::endl;
@@ -125,13 +117,18 @@ std::string CommandHandler::botHandleNews() { // Handling /news
     char buffer[128];
     std::string result;
     while (fgets(buffer, sizeof(buffer), pipe.get()) != nullptr) {
-        result += buffer; // Append script output
+        result += buffer;
     }
 
-    // Return the result
-    if (result.empty()) {
-        return "No news available.";
-    }
+    return result.empty() ? "No news available." : result;
+}
 
-    return result; // Returning the result to the user
+std::string CommandHandler::botHandleAnon(gloox::Client &client, const gloox::Message &msg, const std::string &argument) {
+    // Логируем сообщение
+    // configManager.log("Sending anonymous message to " + msg.to().full(), "Anonymous", argument);  // Убедитесь, что у вас есть доступ к configManager
+
+    // Отправляем анонимное сообщение
+    client.send(msg);
+
+    return "Message sent to " + msg.to().full();
 }

@@ -18,21 +18,17 @@ class XMbot : public MessageHandler,
               public LogHandler {
 public:
     XMbot(const std::string &jid, const std::string &password);
-    
     void handleMessage(const Message &msg, MessageSession *session) override;
-    
     void onConnect() override;
     void onDisconnect(ConnectionError e) override;
     bool onTLSConnect(const CertInfo &info) override;
-
     void handleLog(LogLevel level, LogArea area, const std::string &message) override;
-
     void run();
 
 private:
     Client client;
     CommandHandler commandHandler;
-    ConfigManager configManager;
+    ConfigManager configManager;  // Добавлен configManager
 };
 
 #endif // XMBOT_H
