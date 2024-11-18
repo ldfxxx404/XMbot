@@ -54,5 +54,3 @@ message(STATUS "Project: ${PROJECT_NAME}")
 message(STATUS "Version: ${PROJECT_VERSION}")
 message(STATUS "Gloox libraries found: ${GLOOX_LIBRARIES}")
 message(STATUS "Python libraries found: ${PYTHON_LIBRARIES}")
-
-# Добавьте другие зависимости, если необходимо
