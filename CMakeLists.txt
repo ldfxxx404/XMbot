@@ -1,19 +1,18 @@
-cmake_minimum_required(VERSION 3.5)
+# Минимальная версия CMake
+cmake_minimum_required(VERSION 3.10)
+
+# Название проекта и его версия
 project(XMbot VERSION 1.5.0)
 
-# Установите стандарт C++
+# Установить стандарт C++
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Найти PkgConfig и gloox
+# Найти PkgConfig и библиотеку gloox
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLOOX REQUIRED gloox)
 
-# Найти библиотеку Python (если используется)
-find_package(PythonInterp REQUIRED)
-find_package(PythonLibs REQUIRED)
-
-# Включить каталоги
+# Включить каталоги с заголовочными файлами
 include_directories(${GLOOX_INCLUDE_DIRS} src ${PYTHON_INCLUDE_DIRS})
 
 # Исходные файлы
@@ -24,13 +23,13 @@ set(SOURCES
     src/configManager.cpp
 )
 
-# Создать исполняемый файл
+# Создание исполняемого файла
 add_executable(XMbot ${SOURCES})
 
-# Связать библиотеку gloox и Python
-target_link_libraries(XMbot ${GLOOX_LIBRARIES} ${PYTHON_LIBRARIES})
+# Линковка с библиотеками
+target_link_libraries(XMbot ${GLOOX_LIBRARIES})
 
-# Опционально, добавьте пользовательскую команду для установки бота
+# Опционально, добавьте пользовательскую команду для установки
 install(TARGETS XMbot DESTINATION bin)
 
 # Установить информацию о версии
@@ -39,12 +38,7 @@ set_target_properties(XMbot PROPERTIES
     SOVERSION 1
 )
 
-# Добавить информацию о проекте
-set(CMAKE_PROJECT_VERSION_MAJOR 1)
-set(CMAKE_PROJECT_VERSION_MINOR 0)
-set(CMAKE_PROJECT_VERSION_PATCH 0)
-
-# Добавление дополнительных опций для компиляции
+# Дополнительные опции для компиляции (если сборка в режиме Debug)
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_options(XMbot PRIVATE -DDEBUG)
 endif()
@@ -53,4 +47,3 @@ endif()
 message(STATUS "Project: ${PROJECT_NAME}")
 message(STATUS "Version: ${PROJECT_VERSION}")
 message(STATUS "Gloox libraries found: ${GLOOX_LIBRARIES}")
-message(STATUS "Python libraries found: ${PYTHON_LIBRARIES}")
